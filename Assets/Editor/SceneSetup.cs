@@ -111,6 +111,21 @@ public static class SceneSetup
 
         panel.SetActive(false);
 
+        // Title Panel
+        var titlePanel = new GameObject("TitlePanel");
+        titlePanel.transform.SetParent(canvasObj.transform, false);
+        var titleRect = titlePanel.AddComponent<RectTransform>();
+        titleRect.sizeDelta = new Vector2(700, 500);
+        var titleImg = titlePanel.AddComponent<Image>();
+        titleImg.color = new Color(1f, 1f, 1f, 0.93f);
+
+        CreateText("TitleText", titlePanel.transform, "DODGE",
+            new Vector2(0, 120), new Vector2(680, 130), TextAnchor.MiddleCenter, 96, new Color(1f, 0.3f, 0.45f));
+        CreateText("SubText", titlePanel.transform, "ハートを守れ！",
+            new Vector2(0, 20), new Vector2(680, 60), TextAnchor.MiddleCenter, 40, new Color(0.3f, 0.3f, 0.6f));
+        CreateText("HintText", titlePanel.transform, "Press Enter to start",
+            new Vector2(0, -100), new Vector2(680, 50), TextAnchor.MiddleCenter, 36, new Color(0.5f, 0.5f, 0.75f));
+
         // GameManager
         var gmObj = new GameObject("GameManager");
         var gm = gmObj.AddComponent<GameManager>();
@@ -120,6 +135,7 @@ public static class SceneSetup
         soGm.FindProperty("scoreText").objectReferenceValue = scoreText.GetComponent<Text>();
         soGm.FindProperty("bestText").objectReferenceValue = bestText.GetComponent<Text>();
         soGm.FindProperty("gameOverPanel").objectReferenceValue = panel;
+        soGm.FindProperty("titlePanel").objectReferenceValue = titlePanel;
         soGm.ApplyModifiedProperties();
 
         Debug.Log("セットアップ完了！");

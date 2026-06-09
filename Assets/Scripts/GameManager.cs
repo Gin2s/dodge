@@ -10,10 +10,12 @@ public class GameManager : MonoBehaviour
     [SerializeField] Text scoreText;
     [SerializeField] Text bestText;
     [SerializeField] GameObject gameOverPanel;
+    [SerializeField] GameObject titlePanel;
 
     float score;
     float bestScore;
     bool isPlaying;
+    bool isTitle = true;
 
     void Awake()
     {
@@ -23,11 +25,17 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         bestScore = PlayerPrefs.GetFloat("BestScore", 0f);
-        StartGame();
+        ShowTitle();
     }
 
     void Update()
     {
+        if (isTitle)
+        {
+            if (Input.GetKeyDown(KeyCode.Return)) StartGame();
+            return;
+        }
+
         if (!isPlaying)
         {
             if (Input.GetKeyDown(KeyCode.Return)) StartGame();
@@ -37,11 +45,21 @@ public class GameManager : MonoBehaviour
         score += Time.deltaTime;
         scoreText.text = score.ToString("F1") + "s";
 
-        // 難易度を時間で上昇（10秒ごとに加速）
         float t = score / 10f;
         float interval = Mathf.Max(0.4f, 1.5f - t * 0.15f);
         float speed = Mathf.Min(12f, 4f + t * 0.8f);
         spawner.SetDifficulty(interval, speed);
+    }
+
+    void ShowTitle()
+    {
+        isTitle = true;
+        titlePanel.SetActive(true);
+        gameOverPanel.SetActive(false);
+        scoreText.text = "";
+        bestText.text = "Best: " + bestScore.ToString("F1") + "s";
+        spawner.StopSpawning();
+        player.ResetPlayer();
     }
 
     public void OnPlayerDead()
@@ -61,8 +79,10 @@ public class GameManager : MonoBehaviour
 
     public void StartGame()
     {
+        isTitle = false;
         score = 0f;
         isPlaying = true;
+        titlePanel.SetActive(false);
         gameOverPanel.SetActive(false);
         player.ResetPlayer();
         spawner.ResetSpawner();
